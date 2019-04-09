@@ -1,19 +1,41 @@
 <?php
 
+/**
+ * Interface ConfigInterface. Интерфейс для оболочки класса ConfigTemp.
+ * 
+ * Интерфейс содержит функции для проверки существования ключей в массиве,
+ * получения массива, смены значения в массиве по ключу, получение значения из массива по ключу.
+ */
 interface ConfigInterface{
-    public function getData():array;
+    /**
+     * Функция для проверки существования ключей в массиве.
+     * 
+     * @param $key - ключ для проверки
+     * @return bool
+     */
     public function isValidKey($key):bool;
 
-    public function set($key, $value){
-        if($this->isValidKey($key)){
-            $this->data[$key] = $value;
-            return true;
-        } else {
-            return false;
-        }
-    }
+    /**
+     * Функция получения массива.
+     * 
+     * @return array
+     */
+    public function getData():array;
 
-    public function get($key){
-        return $this->isValidKey($key) ? $this->data[$key] : false;
-    }
+    /**
+     * Функция смены значения в массиве по ключу.
+     * 
+     * @param $key - ключ для смены значения.
+     * @param $value - значение.
+     * @return mixed
+     */
+    public function set($key, $value);
+
+    /**
+     * Функция получение значения из массива по ключу.
+     * 
+     * @param $key - ключ.
+     * @return mixed
+     */
+    public function get($key);
 }
