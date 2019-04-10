@@ -9,13 +9,6 @@ class HTTPAdapter extends AdapterBase{
     $this->data = $data;
   }
 
-  public function getData(){
-    foreach ($this->data as $value) {
-      print_r($value);
-      echo "<br>". "<br>";
-    }
-  }
-
   public function setLoader(){
     return new HTTPLoader($this->data);
   }

@@ -1,6 +1,6 @@
 <?php
 
-abstract class AdapterBase{
+abstract class AdapterBase implements AdapterInterface{
 
 	const configPath = "config";
 	
