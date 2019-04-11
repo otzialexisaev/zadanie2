@@ -1,5 +1,5 @@
 <?php 
-  class MysQLDB extends DBBase{
+  class PDODB extends DBBase{
     private $conn;
     private $output;
     /**
@@ -10,10 +10,13 @@
      * экземпляра $conn. 
      */
     public function connect($host, $user, $password, $dbname){
-      $conn = mysqli_connect($host, $user, $password, $dbname);
-      if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-      } 
+      try{
+        $conn = new PDO("mysql:host=$host;dbname=$dbname", $user, $password);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+      } catch(PDOException $e){
+        echo "Connection failed: " . $e->getMessage();
+      }
+      
       $this->conn = $conn;
       return $this->conn;
     }
@@ -25,15 +28,10 @@
      * каждую полученную строку поместив в массив, который возвращается из функции. 
      */
     public function getTableContentAsArrayAll($table){
-      $query = "SELECT * from " . mysqli_real_escape_string($this->conn, $table) . ";";
-      $output = $this->conn->query($query);
+      $query = $this->conn->query("SELECT * from " .$table . ";");
       $returnArr = [];
-      while($row = $output->fetch_array()){
-        //echo "getTableContentAsArrayAll";
+      while($row = $query->fetch()){
         array_push($returnArr, $row);
-        // while($row = $output->fetch_array()){
-        //   echo $row['config']."<br>";
-        // }
       }
       return $returnArr;
     }
@@ -45,9 +43,8 @@
      * и помещает ее во вложенный массив и возвращает.
      */
     public function getTableContentAsArrayOne($table, $id){
-      $query = "SELECT * from " . mysqli_real_escape_string($this->conn, $table) . " WHERE id=". mysqli_real_escape_string($this->conn, $id). ";";
-      $output = $this->conn->query($query);
-      $returnArr = $output->fetch_array();
+      $query = $this->conn->query("SELECT * from " . $table . " WHERE id=". $id . ";");
+      $returnArr = $query->fetch();
       return $returnArr;
     }
   }
