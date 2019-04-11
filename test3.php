@@ -12,7 +12,9 @@ function init(array $value){
 	}
 }
 
-foreach(AdapterBase::getConfig("test.php") as $value){
+$allConfigs = AdapterBase::getConfig("test.php");
+
+foreach($allConfigs as $value){
 	$setAdapter = init($value);
 	$loader = $setAdapter->setLoader();
 	$loader->doSomething();
