@@ -43,7 +43,8 @@
      * и помещает ее во вложенный массив и возвращает.
      */
     public function getTableContentAsArrayOne($table, $id){
-      $query = $this->conn->query("SELECT * from " . $table . " WHERE id=". $id . ";");
+      echo "SELECT * from " .$this->conn->quote($table). " WHERE id=". $id . ";";
+      $query = $this->conn->query("SELECT * from " . $this->conn->quote($table) . " WHERE id=". $id . ";");
       $returnArr = $query->fetch();
       return $returnArr;
     }
