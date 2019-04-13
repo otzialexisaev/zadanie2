@@ -4,7 +4,20 @@
  */
 class Configuration extends ConfigurationTemplate
 {
-    public $data;
+    /**
+     * @var array Переменная для хранения массива, полученного из конфиг-файла.
+     */
+    private $data;
+
+    /**
+     * Возвращает значение поля $data.
+     * 
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
 
     /**
      * Конструктор, который принимает конфиг в виде массива и присваивает его полю $data.

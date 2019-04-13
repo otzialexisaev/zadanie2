@@ -7,15 +7,16 @@ class ConfigReader
     /**
      * Возвращает определенный адаптер.
      *
-     * Возвращает нужный класс-адаптер исходя из значения 'source' переданного массива-конфига.
+     * Возвращает нужный класс-адаптер исходя из значения массива по ключу 'source' из полученного объекта класса Configuration.
      *
-     * @param  array $pricelistConfig
+     * @param Configuration $configuration
+     * @return AdapterBase
      */
     private static function initAdapter(Configuration $configuration): AdapterBase
     {
-        if ($configuration->data['source'] == "ftp") {
+        if ($configuration->getData()['source'] == "ftp") {
             return new FtpAdapter($configuration);
-        } elseif ($configuration->data['source'] == "http") {
+        } elseif ($configuration->getData()['source'] == "http") {
             return new HttpAdapter($configuration);
         }
     }
@@ -23,13 +24,13 @@ class ConfigReader
     /**
      * Функция обновления конфигов.
      *
-     * getConfig возвращает общий файл-конфиг как массив, содержащий массивы с отдельными конфигами.
+     * AdapterBase::getConfig возвращает общий файл-конфиг как массив, содержащий массивы с отдельными конфигами.
      * Полученный общий массив перебирается, таким образом каждая итерация опрериует отдельным конфигом.
      * Создается новый адаптер с помощью initAdapter.
      * Адаптер создает новый загрузчик.
      * Закгрузчик вызывает функцию doSomething.
      *
-     * @param string $path
+     * @param string $path Путь до нужного конфиг-файла, начиная с директории /config.
      */
     public function updateConfigs(string $path)
     {

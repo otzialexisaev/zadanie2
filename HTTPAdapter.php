@@ -13,11 +13,15 @@ class HttpAdapter extends AdapterBase
     // }
 
     /**
-     * Конструктор, оторый принимает конфиг-массив и присваивает его в поле $data.
+     * Конструктор класса HttpAdapter.
+     *
+     * Конструктор, который принимает конфиг-массив и присваивает его в поле $data.
+     *
+     * @param Configuration $conf
      */
-    public function __construct(Configuration $data)
+    public function __construct(Configuration $conf)
     {
-        $this->data = $data;
+        $this->data = $conf;
     }
 
     /**
