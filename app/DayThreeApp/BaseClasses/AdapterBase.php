@@ -1,4 +1,8 @@
 <?php
+namespace DayThreeApp\BaseClasses;
+
+use DayThreeApp\Interfaces\AdapterInterface as AdapterInterface;
+use DayThreeApp\Interfaces\LoaderInterface as LoaderInterface;
 /**
  * Абстрактный класс для адаптеров, содержащий функцию установки заугрузчика setLoader.
  * Реализует интерфейс адаптеров.

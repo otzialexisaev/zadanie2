@@ -1,4 +1,10 @@
 <?php
+namespace DayThreeApp\Adapters;
+
+use DayThreeApp\BaseClasses\AdapterBase as AdapterBase;
+use DayThreeApp\Interfaces\LoaderInterface as LoaderInterface;
+use DayThreeApp\Main\Configuration as Configuration;
+use DayThreeApp\Loaders\HttpLoader as HttpLoader;
 /**
  * Класс-адаптер для HTTP.
  */

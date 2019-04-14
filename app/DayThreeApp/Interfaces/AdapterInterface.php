@@ -1,4 +1,5 @@
 <?php
+namespace DayThreeApp\Interfaces;
 /**
  * Интерфейс адаптеров.
  */

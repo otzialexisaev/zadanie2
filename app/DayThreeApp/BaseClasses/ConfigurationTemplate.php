@@ -1,4 +1,5 @@
 <?php
+namespace DayThreeApp\BaseClasses;
 
 /**
  * Абстрактный класс для классов конфигурации.

@@ -1,4 +1,6 @@
 <?php
+namespace DayThreeApp\Interfaces;
+use DayThreeApp\Main\Configuration as Configuration;
 /**
  * Интерфейс загрузчиков.
  */

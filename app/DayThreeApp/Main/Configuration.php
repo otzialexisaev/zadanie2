@@ -1,4 +1,7 @@
 <?php
+namespace DayThreeApp\Main;
+
+use DayThreeApp\BaseClasses\ConfigurationTemplate as ConfigurationTemplate;
 /**
  * Класс представляющий один конфиг.
  */

@@ -1,4 +1,10 @@
 <?php
+namespace DayThreeApp\Main;
+
+use DayThreeApp\BaseClasses\AdapterBase as AdapterBase;
+use DayThreeApp\Adapters\FtpAdapter as FtpAdapter;
+use DayThreeApp\Adapters\HttpAdapter as HttpAdapter;
+
 /**
  * Класс-обертка для работы с конфигами.
  */

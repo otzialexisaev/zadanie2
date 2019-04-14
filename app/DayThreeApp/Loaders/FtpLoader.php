@@ -1,4 +1,8 @@
 <?php
+namespace DayThreeApp\Loaders;
+
+use DayThreeApp\Interfaces\LoaderInterface as LoaderInterface;
+use DayThreeApp\Main\Configuration as Configuration;
 /**
  * Загрузчик FTP.
  */
