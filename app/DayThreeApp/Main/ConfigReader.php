@@ -1,9 +1,9 @@
 <?php
 namespace DayThreeApp\Main;
 
-use DayThreeApp\BaseClasses\AdapterBase as AdapterBase;
 use DayThreeApp\Adapters\FtpAdapter as FtpAdapter;
 use DayThreeApp\Adapters\HttpAdapter as HttpAdapter;
+use DayThreeApp\BaseClasses\AdapterBase as AdapterBase;
 
 /**
  * Класс-обертка для работы с конфигами.
@@ -25,6 +25,11 @@ class ConfigReader
         } elseif ($configuration->getData()['source'] == "http") {
             return new HttpAdapter($configuration);
         }
+    }
+
+    public function setConfigsQuery()
+    {
+        
     }
 
     /**

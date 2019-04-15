@@ -1,6 +1,7 @@
 <?php
 
 use DayThreeApp\Main\ConfigReader as ConfigReader;
+use DayThreeApp\DbConnect\MySQLDB as MySQLDB;
 
 spl_autoload_register(function ($class) {
 
@@ -38,3 +39,5 @@ spl_autoload_register(function ($class) {
 
 $test = new ConfigReader();
 $test->updateConfigs("test.php");
+$conn = new MySQLDB();
+$conn->connect("localhost","root","","three");

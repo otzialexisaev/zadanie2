@@ -2,7 +2,7 @@
 return [
     1 => [
         'title' => 'price title',
-        'source' => 'ftp', //ftp http email operator
+        'source' => 'ftp',          //ftp http email operator
         'params' => [
             'login' => 'ftp login',
             'pass' => 'ftp pass',
@@ -11,19 +11,17 @@ return [
     ],
     2 => [
         'title' => 'price title 2',
-        'source' => 'http', //ftp http email operator
+        'source' => 'http',         //ftp http email operator
         'params' => [
-            'login' => 'ftp login',
-            'pass' => 'ftp pass',
-            // and other adapter params
+            // adapter params
         ],
     ],
     3 => [
         'title' => 'price title 3',
-        'source' => 'ftp', //ftp http email operator
+        'source' => 'ftp',          //ftp http email operator
         'params' => [
             'login' => 'ftp login',
-            'pass' => 'ftp pass',
+            'pass' => 'ftp pass',   
             // and other adapter params
         ],
     ],
