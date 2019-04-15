@@ -2,6 +2,7 @@
 namespace DayThreeApp\Main;
 
 use DayThreeApp\BaseClasses\ConfigurationTemplate as ConfigurationTemplate;
+
 /**
  * Класс представляющий один конфиг.
  */
@@ -14,10 +15,10 @@ class Configuration extends ConfigurationTemplate
 
     /**
      * Возвращает значение поля $data.
-     * 
+     *
      * @return array
      */
-    public function getData():array
+    public function getData(): array
     {
         return $this->data;
     }

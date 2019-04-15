@@ -126,7 +126,7 @@ class MysQLDB extends DBBase
     /**
      * Возвращает количество записей из очереди.
      */
-    public function getQueryCount():int
+    public function getQueryCount(): int
     {
         $count = $this->conn->query("SELECT COUNT(*) FROM query;");
         $count = $count->fetch_array();

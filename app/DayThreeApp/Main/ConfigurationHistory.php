@@ -1,8 +1,8 @@
 <?php
 namespace DayThreeApp\Main;
 
-use DayThreeApp\BaseClasses\ConfigurationTemplate as ConfigurationTemplate;
 use DayThreeApp\Main\Configuration as Configuration;
+
 /**
  * Класс представляющий один конфиг.
  */
@@ -17,10 +17,10 @@ class ConfigurationHistory
 
     /**
      * Возвращает значение поля $data.
-     * 
+     *
      * @return array
      */
-    public function getData():Configuration
+    public function getData(): Configuration
     {
         return $this->data;
     }
@@ -28,7 +28,7 @@ class ConfigurationHistory
     /**
      * @return mixed
      */
-    public function getChangedLines():int
+    public function getChangedLines(): int
     {
         return $this->changed_lines;
     }
@@ -44,7 +44,7 @@ class ConfigurationHistory
     /**
      * @return mixed
      */
-    public function getErrors():int
+    public function getErrors(): int
     {
         return $this->errors;
     }
@@ -62,7 +62,7 @@ class ConfigurationHistory
      *
      * @param \DayThreeApp\Main\Configuration $config
      */
-        public function __construct(Configuration $config)
+    public function __construct(Configuration $config)
     {
         $this->data = $config;
     }

@@ -4,6 +4,7 @@ namespace DayThreeApp\Loaders;
 use DayThreeApp\Interfaces\LoaderInterface as LoaderInterface;
 use DayThreeApp\Main\Configuration as Configuration;
 use DayThreeApp\Main\ConfigurationHistory as ConfigurationHistory;
+
 /**
  * Загрузчик HTTP.
  */
@@ -29,7 +30,7 @@ class HttpLoader implements LoaderInterface
     /**
      * @return Configuration
      */
-    public function getData():Configuration
+    public function getData(): Configuration
     {
         return $this->data;
     }

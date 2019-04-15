@@ -33,7 +33,7 @@ abstract class AdapterBase implements AdapterInterface
         return $configurations;
     }
 
-    /** 
+    /**
      * @return LoaderInterface
      */
     abstract public function setLoader(): LoaderInterface;
