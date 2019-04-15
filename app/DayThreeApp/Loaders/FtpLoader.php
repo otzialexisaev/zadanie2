@@ -3,6 +3,8 @@ namespace DayThreeApp\Loaders;
 
 use DayThreeApp\Interfaces\LoaderInterface as LoaderInterface;
 use DayThreeApp\Main\Configuration as Configuration;
+use DayThreeApp\Main\ConfigurationHistory as ConfigurationHistory;
+
 /**
  * Загрузчик FTP.
  */
@@ -10,7 +12,7 @@ class FtpLoader implements LoaderInterface
 {
     /**
      * Переменная хранения конфигурации.
-     * 
+     *
      * Присваивается в конструкторе и имеет тип Configuration.
      *
      * @var Configuration
@@ -30,11 +32,37 @@ class FtpLoader implements LoaderInterface
     }
 
     /**
-     * @return mixed|void
+     * @return Configuration
      */
-    public function doSomething()
+    public function getData():Configuration
     {
-        print_r($this->data);
-        echo "FtpLoader getValues";
+        return $this->data;
+    }
+
+    /**
+     * @param Configuration $data
+     */
+    public function setData(Configuration $data)
+    {
+        $this->data = $data;
+    }
+
+    /**
+     * "Переписывает конфиг" и возвращает объект ConfigurationHistory
+     * с данными по ошибкам и количеству строк.
+     *
+     * @return ConfigurationHistory
+     */
+    public function rewriteConfig(): ConfigurationHistory
+    {
+        echo "FtpLoader \"переписывает\" конфиг";
+        $confHistory = new ConfigurationHistory($this->data);
+        if (rand(0, 1) == 1) {
+            $confHistory->setErrors(404);
+        } else {
+            $confHistory->setErrors(0);
+        }
+        $confHistory->setChangedLines(rand(0, 1000));
+        return $confHistory;
     }
 }

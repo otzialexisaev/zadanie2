@@ -11,18 +11,32 @@ use DayThreeApp\Loaders\HttpLoader as HttpLoader;
 class HttpAdapter extends AdapterBase
 {
     /**
-     * Переменная хранения конфига.
+     * @var Configuration Переменная хранения конфига.
      */
     private $data;
-    // public function __construct(string $path){
-    //   $this->data = AdapterBase::getConfig($path);
-    // }
+
+    /**
+     * @return Configuration
+     */
+    public function getData():Configuration
+    {
+        return $this->data;
+    }
+
+    /**
+     * @param Configuration $data
+     */
+    public function setData(Configuration $data)
+    {
+        $this->data = $data;
+    }
 
     /**
      * Конструктор класса HttpAdapter.
      *
-     * Конструктор, который принимает конфиг-массив и присваивает его в поле $data.
+     * Конструктор, который принимает объект Configuration и присваивает его в поле $data.
      *
+     * HttpAdapter constructor.
      * @param Configuration $conf
      */
     public function __construct(Configuration $conf)
@@ -33,9 +47,11 @@ class HttpAdapter extends AdapterBase
     /**
      * Возвращает новый загрузчик HttpLoader.
      *
-     * В загрузчик передается конфиг-массив.
+     * В загрузчик передается объект Configuration.
+     *
+     * @return LoaderInterface
      */
-    public function setLoader(): LoaderInterface
+        public function setLoader(): LoaderInterface
     {
         return new HttpLoader($this->data);
     }

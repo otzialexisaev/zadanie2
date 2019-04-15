@@ -3,6 +3,7 @@ namespace DayThreeApp\Loaders;
 
 use DayThreeApp\Interfaces\LoaderInterface as LoaderInterface;
 use DayThreeApp\Main\Configuration as Configuration;
+use DayThreeApp\Main\ConfigurationHistory as ConfigurationHistory;
 /**
  * Загрузчик HTTP.
  */
@@ -12,6 +13,7 @@ class HttpLoader implements LoaderInterface
      * Переменная хранения конфига.
      */
     private $data;
+
     /**
      * Конструктор класса HttpLoader.
      *
@@ -19,18 +21,43 @@ class HttpLoader implements LoaderInterface
      *
      * @param Configuration $conf
      */
-    public function __construct(Configuration $arr)
+    public function __construct(Configuration $conf)
     {
-        $this->data = $arr;
+        $this->data = $conf;
     }
 
+    /**
+     * @return Configuration
+     */
+    public function getData():Configuration
+    {
+        return $this->data;
+    }
 
     /**
-     * @return mixed|void
+     * @param Configuration $data
      */
-    public function doSomething()
+    public function setData(Configuration $data)
     {
-        print_r($this->data);
-        echo "HttpLoader getValues";
+        $this->data = $data;
+    }
+
+    /**
+     * "Переписывает конфиг" и возвращает объект ConfigurationHistory
+     * с данными по ошибкам и количеству строк.
+     *
+     * @return ConfigurationHistory
+     */
+    public function rewriteConfig(): ConfigurationHistory
+    {
+        echo "HttpLoader \"переписывает\" конфиг";
+        $confHistory = new ConfigurationHistory($this->data);
+        if (rand(0, 1) == 1) {
+            $confHistory->setErrors(404);
+        } else {
+            $confHistory->setErrors(0);
+        }
+        $confHistory->setChangedLines(rand(0, 1000));
+        return $confHistory;
     }
 }

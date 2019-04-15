@@ -1,6 +1,9 @@
 <?php
 namespace DayThreeApp\Interfaces;
+
 use DayThreeApp\Main\Configuration as Configuration;
+use DayThreeApp\Main\ConfigurationHistory as ConfigurationHistory;
+
 /**
  * Интерфейс загрузчиков.
  */
@@ -14,8 +17,9 @@ interface LoaderInterface
      * @param Configuration $conf
      */
     public function __construct(Configuration $conf);
+
     /**
      * @return mixed
      */
-    public function doSomething();
+    public function rewriteConfig(): ConfigurationHistory;
 }

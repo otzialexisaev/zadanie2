@@ -14,13 +14,31 @@ class FtpAdapter extends AdapterBase
      * Переменная хранения конфигурации.
      * 
      * Присваивается в конструкторе и имеет тип Configuration.
+     *
+     * @var Configuration
      */
     private $data;
 
     /**
+     * @return Configuration
+     */
+    public function getData():Configuration
+    {
+        return $this->data;
+    }
+
+    /**
+     * @param Configuration $data
+     */
+    public function setData(Configuration $data)
+    {
+        $this->data = $data;
+    }
+    
+    /**
      * Конструктор класса FtpAdapter.
      *
-     * Конструктор, который принимает конфиг-массив и присваивает его в поле $data.
+     * Конструктор, который принимает объект Configuration и присваивает его в поле $data.
      *
      * @param Configuration $conf
      */
@@ -32,11 +50,11 @@ class FtpAdapter extends AdapterBase
     /**
      * Возвращает новый загрузчик FtpLoader.
      *
-     * В конструктор загрузчика передается конфиг-массив.
+     * В конструктор загрузчика передается объект Configuration.
      *
      * @return LoaderInterface
      */
-    public function setLoader(): LoaderInterface
+        public function setLoader(): LoaderInterface
     {
         return new FtpLoader($this->data);
     }

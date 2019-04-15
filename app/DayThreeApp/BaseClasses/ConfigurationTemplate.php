@@ -6,5 +6,8 @@ namespace DayThreeApp\BaseClasses;
  */
 abstract class ConfigurationTemplate
 {
+    /**
+     * @param array $config
+     */
     abstract public function __construct(array $config);
 }
