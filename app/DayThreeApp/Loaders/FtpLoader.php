@@ -34,7 +34,7 @@ class FtpLoader implements LoaderInterface
     /**
      * @return Configuration
      */
-    public function getData():Configuration
+    public function getData(): Configuration
     {
         return $this->data;
     }
@@ -57,11 +57,7 @@ class FtpLoader implements LoaderInterface
     {
         echo "FtpLoader \"переписывает\" конфиг";
         $confHistory = new ConfigurationHistory($this->data);
-        if (rand(0, 1) == 1) {
-            $confHistory->setErrors(404);
-        } else {
-            $confHistory->setErrors(0);
-        }
+        $confHistory->setErrors(rand(0, 5));
         $confHistory->setChangedLines(rand(0, 1000));
         return $confHistory;
     }

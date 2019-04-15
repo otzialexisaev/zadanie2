@@ -110,16 +110,24 @@ class ConfigReader
         $configurations = AdapterBase::getConfig($path);
         $this->setConfigsQuery($conn, $configurations);
         echo "<hr>";
-        for ($i = 0; $i < sizeof($configurations); $i++) {
+        $count = $conn->getQueryCount();
+        for ($i = 0; $i < $count; $i++) {
+            echo "Название прайслиста: ".$configurations[$i]->getData()['title']."<br>";
+            echo "Источник прайслиста: ".$configurations[$i]->getData()['source']."<br>";
+            //print_r($this->getConfigFromQuery($conn));
             $adapter = $this::initAdapter($this->getConfigFromQuery($conn));
             $loader = $adapter->setLoader();
             //print_r($loader);
+            echo "Перезапись конфигурации прайслиста...<br>";
             if ($confHistory = $loader->rewriteConfig()) {
                 // $this->deleteQueryRecord($conn);
                 $this->addConfHistory($conn, $confHistory);
                 $this->deleteQueryRecord($conn);
+                echo "Ошибки: " . $confHistory->getErrors() . "<br>";
+                echo "Количество измененных линий: " . $confHistory->getChangedLines() . "<br>"; 
             } else {
-                echo "Файл не переписан";
+                echo "Конфигурация не была переписана.";
+
             }
             echo "<hr>";
         }

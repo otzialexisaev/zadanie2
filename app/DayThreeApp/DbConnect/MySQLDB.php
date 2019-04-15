@@ -61,23 +61,23 @@ class MysQLDB extends DBBase
 
     /**
      * Сохранение объекта Configuration в таблицу очереди с помощью serialize.
-     * 
+     *
      * @param Configuration $conf
      */
     public function saveConfigToQuery(Configuration $conf)
     {
         $query = "INSERT INTO " . mysqli_real_escape_string($this->conn, $this::QUERY_TABLE_NAME) . " (configuration) VALUES (\"" . mysqli_real_escape_string($this->conn, serialize($conf)) . "\");";
         if ($this->conn->query($query)) {
-            echo "Конфиг добавлен в очередь" . "<br>";
+            echo "Конфигурация добавлена в очередь" . "<br>";
         } else {
             echo $this->conn->error;
-            echo "Конфиг НЕ добавлен в очередь" . "<br>";
+            echo "Конфигурация НЕ добавлена в очередь" . "<br>";
         }
     }
 
     /**
      * Получение объекта Configuration из первой записи таблицы очереди с помощью unserialize.
-     * 
+     *
      * @return Configuration
      */
     public function getFirstQueryRecordAsConfiguration(): Configuration
@@ -98,7 +98,7 @@ class MysQLDB extends DBBase
     {
         $query = "DELETE from " . $this::QUERY_TABLE_NAME . " LIMIT 1;";
         if ($this->conn->query($query)) {
-            echo "<br>Конфиг удален из очереди<br>";
+            echo "<br>Конфигурация удалена из очереди<br>";
         } else {
             echo $this->conn->error;
         }
@@ -106,22 +106,31 @@ class MysQLDB extends DBBase
 
     /**
      * Добавляет объект ConfigurationHistory в таблицу истории.
-     * 
+     *
      * @param ConfigurationHistory $confHistory
      */
     public function addConfHistory(ConfigurationHistory $confHistory)
     {
         $query = "INSERT INTO " . mysqli_real_escape_string($this->conn, $this::HISTORY_TABLE_NAME)
         . " (configuration, changed_lines, errors) VALUES (\"" .
-        mysqli_real_escape_string($this->conn, serialize($confHistory->getData())) . "\",\"" . 
-        mysqli_real_escape_string($this->conn, $confHistory->getChangedLines()) . "\",\"" . 
+        mysqli_real_escape_string($this->conn, serialize($confHistory->getData())) . "\",\"" .
+        mysqli_real_escape_string($this->conn, $confHistory->getChangedLines()) . "\",\"" .
         mysqli_real_escape_string($this->conn, $confHistory->getErrors()) . "\");";
         if ($this->conn->query($query)) {
-            echo "Конфиг добавлен в историю" . "<br>";
+            echo "<br>" . "Конфигурация добавлена в историю" . "<br>";
         } else {
             echo $this->conn->error . "<br>";
-            echo "Конфиг НЕ добавлен в историю" . "<br>";
+            echo "<br>" . "Конфигурация НЕ добавлена в историю" . "<br>";
         }
+    }
+    /**
+     * Возвращает количество записей из очереди.
+     */
+    public function getQueryCount():int
+    {
+        $count = $this->conn->query("SELECT COUNT(*) FROM query;");
+        $count = $count->fetch_array();
+        return $count[0];
     }
 
     /**
@@ -134,7 +143,7 @@ class MysQLDB extends DBBase
      * @param int $id
      * @return array
      */
-        public function getTableContentAsArrayOne(string $table, int $id): array
+    public function getTableContentAsArrayOne(string $table, int $id): array
     {
         $query = "SELECT * from " . mysqli_real_escape_string($this->conn, $table) . " WHERE id=" . mysqli_real_escape_string($this->conn, $id) . ";";
         $output = $this->conn->query($query);
