@@ -5,7 +5,6 @@ use DayThreeApp\Adapters\FtpAdapter as FtpAdapter;
 use DayThreeApp\Adapters\HttpAdapter as HttpAdapter;
 use DayThreeApp\BaseClasses\AdapterBase as AdapterBase;
 use DayThreeApp\DbConnect\MySQLDB as MySQLDB;
-use DayThreeApp\Main\ConfigurationHistory as ConfigurationHistory;
 
 /**
  * Класс-обертка для работы с конфигами.

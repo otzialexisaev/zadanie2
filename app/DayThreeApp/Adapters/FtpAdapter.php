@@ -3,8 +3,9 @@ namespace DayThreeApp\Adapters;
 
 use DayThreeApp\BaseClasses\AdapterBase as AdapterBase;
 use DayThreeApp\Interfaces\LoaderInterface as LoaderInterface;
-use DayThreeApp\Main\Configuration as Configuration;
 use DayThreeApp\Loaders\FtpLoader as FtpLoader;
+use DayThreeApp\Main\Configuration as Configuration;
+
 /**
  * Класс-адаптер для FTP.
  */
@@ -12,7 +13,7 @@ class FtpAdapter extends AdapterBase
 {
     /**
      * Переменная хранения конфигурации.
-     * 
+     *
      * Присваивается в конструкторе и имеет тип Configuration.
      *
      * @var Configuration
@@ -22,7 +23,7 @@ class FtpAdapter extends AdapterBase
     /**
      * @return Configuration
      */
-    public function getData():Configuration
+    public function getData(): Configuration
     {
         return $this->data;
     }
@@ -34,7 +35,7 @@ class FtpAdapter extends AdapterBase
     {
         $this->data = $data;
     }
-    
+
     /**
      * Конструктор класса FtpAdapter.
      *
@@ -54,7 +55,7 @@ class FtpAdapter extends AdapterBase
      *
      * @return LoaderInterface
      */
-        public function setLoader(): LoaderInterface
+    public function setLoader(): LoaderInterface
     {
         return new FtpLoader($this->data);
     }

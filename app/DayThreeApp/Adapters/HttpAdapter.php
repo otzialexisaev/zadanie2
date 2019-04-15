@@ -3,8 +3,9 @@ namespace DayThreeApp\Adapters;
 
 use DayThreeApp\BaseClasses\AdapterBase as AdapterBase;
 use DayThreeApp\Interfaces\LoaderInterface as LoaderInterface;
-use DayThreeApp\Main\Configuration as Configuration;
 use DayThreeApp\Loaders\HttpLoader as HttpLoader;
+use DayThreeApp\Main\Configuration as Configuration;
+
 /**
  * Класс-адаптер для HTTP.
  */
@@ -18,7 +19,7 @@ class HttpAdapter extends AdapterBase
     /**
      * @return Configuration
      */
-    public function getData():Configuration
+    public function getData(): Configuration
     {
         return $this->data;
     }
@@ -51,7 +52,7 @@ class HttpAdapter extends AdapterBase
      *
      * @return LoaderInterface
      */
-        public function setLoader(): LoaderInterface
+    public function setLoader(): LoaderInterface
     {
         return new HttpLoader($this->data);
     }
