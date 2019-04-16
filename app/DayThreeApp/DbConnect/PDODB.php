@@ -141,21 +141,26 @@ class PDODB extends DBBase
      */
     public function getTableContentAsArrayAll($table): ?array
     {
-        $query = "SELECT * from " . $this->conn->quote($table) . ";";
+        $query = "SELECT * from " . $table . ";";
+
         try {
             if ($output = $this->conn->query($query)) {
                 $returnArr = [];
-                while ($row = $output->fetch_array()) {
+                while ($row = $output->fetch()) {
                     array_push($returnArr, $row);
                 }
+                //print_r($returnArr);
                 return $returnArr;
             } else {
-                throw new \Exception("Ошибка получения записей из табоицы " . $table);
+                throw new \Exception("Ошибка получения записей из таблицы " . $table);
             }
         } catch (\Exception $e) {
+            echo 'asdasdasd';
+            print_r($output = $this->conn->query($query));
             $e->getMessage();
             return null;
         }
+
         // $returnArr = [];
         // while ($row = $query->fetch()) {
         //     array_push($returnArr, $row);
@@ -175,5 +180,13 @@ class PDODB extends DBBase
         $query = $this->conn->query("SELECT * from " . $this->conn->quote($table) . " WHERE id=" . $id . ";");
         $returnArr = $query->fetch();
         return $returnArr;
+    }
+
+    /**
+     * Закрывает подключение к БД.
+     */
+    public function close()
+    {
+        $this->conn = null;
     }
 }

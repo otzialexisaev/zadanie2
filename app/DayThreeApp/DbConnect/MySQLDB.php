@@ -195,7 +195,7 @@ class MysQLDB extends DBBase
     }
     
     /**
-     * закрывает подключение к БД.
+     * Закрывает подключение к БД.
      */
     public function close()
     {

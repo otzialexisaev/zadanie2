@@ -5,6 +5,7 @@ use DayThreeApp\Adapters\FtpAdapter as FtpAdapter;
 use DayThreeApp\Adapters\HttpAdapter as HttpAdapter;
 use DayThreeApp\BaseClasses\AdapterBase as AdapterBase;
 use DayThreeApp\DbConnect\MySQLDB as MySQLDB;
+use DayThreeApp\DbConnect\PDODB as PDODB;
 use DayThreeApp\Interfaces\DBInterface as DBInterface;
 
 /**
@@ -47,59 +48,31 @@ class ConfigReader
         }
     }
 
-    // /**
-    //  * Вызывает функцию getFirstQueryRecordAsConfiguration класса БД.
-    //  *
-    //  * @param MySQLDB $conn
-    //  * @return Configuration
-    //  */
-    // public function getConfigFromQuery(MySQLDB $conn): Configuration
-    // {
-    //     return $conn->getFirstQueryRecordAsConfiguration();
-    // }
-
-    // /**
-    //  * Вызывает функцию deleteFirstQueryRecord класса БД.
-    //  *
-    //  * @param MySQLDB $conn
-    //  */
-    // public function deleteQueryRecord(MySQLDB $conn)
-    // {
-    //     $conn->deleteFirstQueryRecord();
-    // }
-
-    // /**
-    //  * Вызывает функцию moveConfFromQueryToHistory класса БД.
-    //  *
-    //  * @param MySQLDB $conn
-    //  */
-    // public function moveConfFromQueryToHistory(MySQLDB $conn)
-    // {
-    //     $conn->moveConfFromQueryToHistory();
-    // }
-
-    // /**
-    //  * Вызывает функцию moveConfFromQueryToHistory класса БД.
-    //  *
-    //  * @param MySQLDB $conn
-    //  * @param ConfigurationHistory $confHistory
-    //  *
-    //  */
-    // public function addConfHistory(MySQLDB $conn, ConfigurationHistory $confHistory)
-    // {
-    //     $conn->addConfHistory($confHistory);
-    // }
-
     /**
-     * Подключение к БД.
+     * Подключение к указанной БД (PDO или MySQL).
+     * 
+     * @param string $db
      */
-    public function connectToDB()
+    public function connectToDB(string $db)
     {
-        $this->conn = new MySQLDB();
-        $this->conn->connect("localhost", "root", "", "three");
-        return $this->conn;
+        switch ($db) {
+            case 'PDO':
+                $this->conn = new PDODB();
+                $this->conn->connect("localhost", "root", "", "three");
+                break;
+            case 'MySQL':
+                $this->conn = new MySQLDB();
+                $this->conn->connect("localhost", "root", "", "three");
+                break;
+
+            default:
+                break;
+        }
     }
 
+    /**
+     * Закрывает соединение с базой данных.
+     */
     public function closeConnection()
     {
         $this->conn->close();
@@ -123,27 +96,21 @@ class ConfigReader
      */
     public function updateConfigs(string $path)
     {
-        $this->connectToDB();
-        // $conn = new MySQLDB();
-        // $conn->connect("localhost", "root", "", "three");
+        $this->connectToDB("MySQL");
         $configurations = AdapterBase::getConfig($path);
         echo "<hr>Обновление конфигурационных файлов:<hr>";
         $this->setConfigsQuery($this->conn, $configurations);
         echo "<hr>";
         $queryCount = $this->conn->getQueryCount();
         for ($i = 0; $i < $queryCount; $i++) {
-            //print_r($this->getConfigFromQuery($conn));
             $configFromQuery = $this->conn->getFirstQueryRecordAsConfiguration();
             echo "Название прайслиста: " . $configFromQuery->getData()['title'] . "<br>";
             echo "Источник прайслиста: " . $configFromQuery->getData()['source'] . "<br>";
             $adapter = $this::initAdapter($configFromQuery);
             $loader = $adapter->setLoader();
-            // print_r($loader);
             echo "Перезапись конфигурации прайслиста...<br>";
             if ($confHistory = $loader->rewriteConfig()) {
-                // $this->addConfHistory($conn, $confHistory);
                 $this->conn->addConfHistory($confHistory);
-                // $this->deleteQueryRecord($conn);
                 $this->conn->deleteFirstQueryRecord();
                 echo "Ошибки: " . $confHistory->getErrors() . "<br>";
                 echo "Количество измененных линий: " . $confHistory->getChangedLines() . "<br>";
@@ -154,60 +121,33 @@ class ConfigReader
         }
         $this->closeConnection();
     }
-
-    /**
+    /*
      * Выводит каждую запись из таблицы history.
      */
     public function showHistory()
     {
-        $this->connectToDB();
+        $this->connectToDB("MySQL");
+        //print_r($this->conn);
         echo "История изменений:<br>";
         $historyArray = $this->conn->getTableContentAsArrayAll('history');
         //print_r($historyArray);
-        echo "<table style='width:600px;'>";
-        echo "<tr><th>Название</th><th>Количество измененных строк</th><th>Количество ошибок</th></tr>";
-        for($i = 0; $i<sizeof($historyArray); $i++){
+        echo "<table style='width:600px;border:1px solid black'>";
+        echo "<tr style='border:1px solid black'>
+            <th style='border:1px solid black'>Название</th>
+            <th style='border:1px solid black'>Количество измененных строк</th>
+            <th style='border:1px solid black'>Количество ошибок</th>
+        </tr>";
+        for ($i = 0; $i < sizeof($historyArray); $i++) {
             //print_r($historyArray[$i]);
             $config = unserialize($historyArray[$i]['configuration']);
-            echo "<tr>";
-            echo "<th>".$config->getData()['title']."</th>";
-            echo "<th>" . $historyArray[$i]['changed_lines'] . "</th>";
-            echo "<th>" . $historyArray[$i]['errors'] . "</th>";
+            echo "<tr style='border:1px solid black'>";
+            echo "<th style='border:1px solid black'>" . $config->getData()['title'] . "</th>";
+            echo "<th style='border:1px solid black'>" . $historyArray[$i]['changed_lines'] . "</th>";
+            echo "<th style='border:1px solid black'>" . $historyArray[$i]['errors'] . "</th>";
             //print_r($config->getData());
             echo "</tr>";
         }
         echo "</table>";
         $this->closeConnection();
     }
-    // // Версия с подключением через PDO
-    // public function updateConfigs(string $path)
-    // {
-    //     $conn = new PDODB();
-    //     $conn->connect("localhost", "root", "", "three");
-    //     $configurations = AdapterBase::getConfig($path);
-    //     $this->setConfigsQuery($conn, $configurations);
-    //     echo "<hr>";
-    //     $queryCount = $conn->getQueryCount();
-    //     for ($i = 0; $i < $queryCount; $i++) {
-    //         //print_r($this->getConfigFromQuery($conn));
-    //         $configFromQuery = $conn->getFirstQueryRecordAsConfiguration();
-    //         echo "Название прайслиста: " . $configFromQuery->getData()['title'] . "<br>";
-    //         echo "Источник прайслиста: " . $configFromQuery->getData()['source'] . "<br>";
-    //         $adapter = $this::initAdapter($configFromQuery);
-    //         $loader = $adapter->setLoader();
-    //         // print_r($loader);
-    //         echo "Перезапись конфигурации прайслиста...<br>";
-    //         if ($confHistory = $loader->rewriteConfig()) {
-    //             // $this->addConfHistory($conn, $confHistory);
-    //             $conn->addConfHistory($confHistory);
-    //             // $this->deleteQueryRecord($conn);
-    //             $conn->deleteFirstQueryRecord();
-    //             echo "<br>Ошибки: " . $confHistory->getErrors();
-    //             echo "<br>Количество измененных линий: " . $confHistory->getChangedLines() . "<br>";
-    //         } else {
-    //             echo "Конфигурация не была переписана.";
-    //         }
-    //         echo "<hr>";
-    //     }
-    // }
 }
