@@ -95,8 +95,7 @@ class MysQLDB extends DBBase
         try {
             if ($get = $this->conn->query($query)) {
                 $getFetched = $get->fetch_array();
-                print_r($getFetched['configuration']);
-                echo "<br><br>";
+                //print_r($getFetched['configuration']);
                 $config = unserialize($getFetched['configuration']);
                 return $config;
             } else {
@@ -193,5 +192,13 @@ class MysQLDB extends DBBase
         } catch (\Exception $e) {
             echo "<br>" . $e->getMessage() . "<br>";
         }
+    }
+    
+    /**
+     * закрывает подключение к БД.
+     */
+    public function close()
+    {
+        $this->conn->close();
     }
 }

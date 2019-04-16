@@ -12,6 +12,9 @@ use DayThreeApp\Interfaces\DBInterface as DBInterface;
  */
 class ConfigReader
 {
+
+    private $conn;
+
     /**
      * Возвращает определенный адаптер.
      *
@@ -88,6 +91,21 @@ class ConfigReader
     // }
 
     /**
+     * Подключение к БД.
+     */
+    public function connectToDB()
+    {
+        $this->conn = new MySQLDB();
+        $this->conn->connect("localhost", "root", "", "three");
+        return $this->conn;
+    }
+
+    public function closeConnection()
+    {
+        $this->conn->close();
+    }
+
+    /**
      * Функция обновления конфигов. Вызывает функции записи конфига в таблицу очередей,
      * обработку и перенос в таблицу истории записей.
      *
@@ -105,15 +123,17 @@ class ConfigReader
      */
     public function updateConfigs(string $path)
     {
-        $conn = new MySQLDB();
-        $conn->connect("localhost", "root", "", "three");
+        $this->connectToDB();
+        // $conn = new MySQLDB();
+        // $conn->connect("localhost", "root", "", "three");
         $configurations = AdapterBase::getConfig($path);
-        $this->setConfigsQuery($conn, $configurations);
+        echo "<hr>Обновление конфигурационных файлов:<hr>";
+        $this->setConfigsQuery($this->conn, $configurations);
         echo "<hr>";
-        $queryCount = $conn->getQueryCount();
+        $queryCount = $this->conn->getQueryCount();
         for ($i = 0; $i < $queryCount; $i++) {
             //print_r($this->getConfigFromQuery($conn));
-            $configFromQuery = $conn->getFirstQueryRecordAsConfiguration();
+            $configFromQuery = $this->conn->getFirstQueryRecordAsConfiguration();
             echo "Название прайслиста: " . $configFromQuery->getData()['title'] . "<br>";
             echo "Источник прайслиста: " . $configFromQuery->getData()['source'] . "<br>";
             $adapter = $this::initAdapter($configFromQuery);
@@ -122,9 +142,9 @@ class ConfigReader
             echo "Перезапись конфигурации прайслиста...<br>";
             if ($confHistory = $loader->rewriteConfig()) {
                 // $this->addConfHistory($conn, $confHistory);
-                $conn->addConfHistory($confHistory);
+                $this->conn->addConfHistory($confHistory);
                 // $this->deleteQueryRecord($conn);
-                $conn->deleteFirstQueryRecord();
+                $this->conn->deleteFirstQueryRecord();
                 echo "Ошибки: " . $confHistory->getErrors() . "<br>";
                 echo "Количество измененных линий: " . $confHistory->getChangedLines() . "<br>";
             } else {
@@ -132,6 +152,32 @@ class ConfigReader
             }
             echo "<hr>";
         }
+        $this->closeConnection();
+    }
+
+    /**
+     * Выводит каждую запись из таблицы history.
+     */
+    public function showHistory()
+    {
+        $this->connectToDB();
+        echo "История изменений:<br>";
+        $historyArray = $this->conn->getTableContentAsArrayAll('history');
+        //print_r($historyArray);
+        echo "<table style='width:600px;'>";
+        echo "<tr><th>Название</th><th>Количество измененных строк</th><th>Количество ошибок</th></tr>";
+        for($i = 0; $i<sizeof($historyArray); $i++){
+            //print_r($historyArray[$i]);
+            $config = unserialize($historyArray[$i]['configuration']);
+            echo "<tr>";
+            echo "<th>".$config->getData()['title']."</th>";
+            echo "<th>" . $historyArray[$i]['changed_lines'] . "</th>";
+            echo "<th>" . $historyArray[$i]['errors'] . "</th>";
+            //print_r($config->getData());
+            echo "</tr>";
+        }
+        echo "</table>";
+        $this->closeConnection();
     }
     // // Версия с подключением через PDO
     // public function updateConfigs(string $path)
