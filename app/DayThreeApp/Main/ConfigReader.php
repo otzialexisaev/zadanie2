@@ -5,6 +5,7 @@ use DayThreeApp\Adapters\FtpAdapter as FtpAdapter;
 use DayThreeApp\Adapters\HttpAdapter as HttpAdapter;
 use DayThreeApp\BaseClasses\AdapterBase as AdapterBase;
 use DayThreeApp\DbConnect\MySQLDB as MySQLDB;
+use DayThreeApp\Interfaces\DBInterface as DBInterface;
 
 /**
  * Класс-обертка для работы с конфигами.
@@ -22,21 +23,21 @@ class ConfigReader
     private static function initAdapter(Configuration $configuration): AdapterBase
     {
         if ($configuration->getData()['source'] == "ftp") {
-            echo "<br>Загрузчик FTPloader<br>";
+            echo "<br>Адаптер - FTPAdapter<br>";
             return new FtpAdapter($configuration);
         } elseif ($configuration->getData()['source'] == "http") {
-            echo "<br>Загрузчик Httploader<br>";
+            echo "<br>Адаптер - HTTPAdapter<br>";
             return new HttpAdapter($configuration);
         }
     }
 
     /**
-     * Помещает элементы конфиг-файла в таблицу query_table.
+     * Помещает элементы массива в таблицу query_table.
      *
      * @param MySQLDB $conn Объект MySQLDB.
      * @param array $configs Массив объектов Configuration.
      */
-    public function setConfigsQuery(MySQLDB $conn, array $configs)
+    public function setConfigsQuery(DBInterface $conn, array $configs)
     {
         foreach ($configs as $configuration) {
             $conn->saveConfigToQuery($configuration);
@@ -109,14 +110,15 @@ class ConfigReader
         $configurations = AdapterBase::getConfig($path);
         $this->setConfigsQuery($conn, $configurations);
         echo "<hr>";
-        $count = $conn->getQueryCount();
-        for ($i = 0; $i < $count; $i++) {
-            echo "Название прайслиста: " . $configurations[$i]->getData()['title'] . "<br>";
-            echo "Источник прайслиста: " . $configurations[$i]->getData()['source'] . "<br>";
+        $queryCount = $conn->getQueryCount();
+        for ($i = 0; $i < $queryCount; $i++) {
             //print_r($this->getConfigFromQuery($conn));
-            $adapter = $this::initAdapter($conn->getFirstQueryRecordAsConfiguration());
+            $configFromQuery = $conn->getFirstQueryRecordAsConfiguration();
+            echo "Название прайслиста: " . $configFromQuery->getData()['title'] . "<br>";
+            echo "Источник прайслиста: " . $configFromQuery->getData()['source'] . "<br>";
+            $adapter = $this::initAdapter($configFromQuery);
             $loader = $adapter->setLoader();
-            //print_r($loader);
+            // print_r($loader);
             echo "Перезапись конфигурации прайслиста...<br>";
             if ($confHistory = $loader->rewriteConfig()) {
                 // $this->addConfHistory($conn, $confHistory);
@@ -127,9 +129,39 @@ class ConfigReader
                 echo "Количество измененных линий: " . $confHistory->getChangedLines() . "<br>";
             } else {
                 echo "Конфигурация не была переписана.";
-
             }
             echo "<hr>";
         }
     }
+    // // Версия с подключением через PDO
+    // public function updateConfigs(string $path)
+    // {
+    //     $conn = new PDODB();
+    //     $conn->connect("localhost", "root", "", "three");
+    //     $configurations = AdapterBase::getConfig($path);
+    //     $this->setConfigsQuery($conn, $configurations);
+    //     echo "<hr>";
+    //     $queryCount = $conn->getQueryCount();
+    //     for ($i = 0; $i < $queryCount; $i++) {
+    //         //print_r($this->getConfigFromQuery($conn));
+    //         $configFromQuery = $conn->getFirstQueryRecordAsConfiguration();
+    //         echo "Название прайслиста: " . $configFromQuery->getData()['title'] . "<br>";
+    //         echo "Источник прайслиста: " . $configFromQuery->getData()['source'] . "<br>";
+    //         $adapter = $this::initAdapter($configFromQuery);
+    //         $loader = $adapter->setLoader();
+    //         // print_r($loader);
+    //         echo "Перезапись конфигурации прайслиста...<br>";
+    //         if ($confHistory = $loader->rewriteConfig()) {
+    //             // $this->addConfHistory($conn, $confHistory);
+    //             $conn->addConfHistory($confHistory);
+    //             // $this->deleteQueryRecord($conn);
+    //             $conn->deleteFirstQueryRecord();
+    //             echo "<br>Ошибки: " . $confHistory->getErrors();
+    //             echo "<br>Количество измененных линий: " . $confHistory->getChangedLines() . "<br>";
+    //         } else {
+    //             echo "Конфигурация не была переписана.";
+    //         }
+    //         echo "<hr>";
+    //     }
+    // }
 }
