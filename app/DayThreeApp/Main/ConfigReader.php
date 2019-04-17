@@ -104,16 +104,16 @@ class ConfigReader
         $queryCount = $this->conn->getQueryCount();
         for ($i = 0; $i < $queryCount; $i++) {
             $configFromQuery = $this->conn->getFirstQueryRecordAsConfiguration();
-            echo "Название прайслиста: " . $configFromQuery->getData()['title'] . "<br>";
-            echo "Источник прайслиста: " . $configFromQuery->getData()['source'] . "<br>";
+            echo "<br>Название прайслиста: " . $configFromQuery->getData()['title'];
+            echo "<br>Источник прайслиста: " . $configFromQuery->getData()['source'];
             $adapter = $this::initAdapter($configFromQuery);
             $loader = $adapter->setLoader();
-            echo "Перезапись конфигурации прайслиста...<br>";
+            echo "<br>Перезапись конфигурации прайслиста...";
             if ($confHistory = $loader->rewriteConfig()) {
                 $this->conn->addConfHistory($confHistory);
                 $this->conn->deleteFirstQueryRecord();
-                echo "Ошибки: " . $confHistory->getErrors() . "<br>";
-                echo "Количество измененных линий: " . $confHistory->getChangedLines() . "<br>";
+                echo "<br>Ошибки: " . $confHistory->getErrors();
+                echo "<br>Количество измененных линий: " . $confHistory->getChangedLines();
             } else {
                 echo "Конфигурация не была переписана.";
             }

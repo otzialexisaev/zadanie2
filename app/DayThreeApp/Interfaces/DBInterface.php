@@ -12,6 +12,6 @@ interface DBInterface
     public function saveConfigToQuery(Configuration $conf);
     public function getFirstQueryRecordAsConfiguration(): ?Configuration;
     public function deleteFirstQueryRecord();
-    public function getQueryCount(): int;
+    public function getQueryCount(): ?int;
     public function addConfHistory(ConfigurationHistory $confHistory);
 }

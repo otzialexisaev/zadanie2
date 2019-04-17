@@ -11,6 +11,7 @@ class PDODB extends DBBase
     const HISTORY_TABLE_NAME = "history";
     private $conn;
     private $output;
+
     /**
      * Функция соединения с базой данных.
      *
@@ -26,7 +27,6 @@ class PDODB extends DBBase
         } catch (\PDOException $e) {
             echo "Connection failed: " . $e->getMessage();
         }
-
         $this->conn = $conn;
         return $this->conn;
     }
@@ -40,34 +40,29 @@ class PDODB extends DBBase
     {
         $query = "INSERT INTO " . $this::QUERY_TABLE_NAME . " (configuration) VALUES (" . $this->conn->quote(serialize($conf)) . ");";
         try {
-            if ($this->conn->query($query)) {
-                echo "Конфигурация добавлена в очередь" . "<br>";
-            } else {
-                throw new \Exception("Ошибка добавления конфигурации в очередь");
-            }
+            $this->conn->query($query);
+            echo "<br>Конфигурация добавлена в очередь";
         } catch (\Exception $e) {
-            echo $e->getMessage();
+            echo "<br>Ошибка добавления конфигурации в очередь" . $e->getMessage();
         }
     }
 
     /**
      * Получение объекта Configuration из первой записи таблицы очереди с помощью unserialize.
      *
-     * @return Configuration|null
+     * @return Configuration|null Null возвращается при неудачном выполнении операции.
      */
     public function getFirstQueryRecordAsConfiguration(): ?Configuration
     {
         $query = "SELECT configuration from " . $this::QUERY_TABLE_NAME . " order by configuration asc limit 1;";
         try {
-            if ($get = $this->conn->query($query)) {
-                $getFetched = $get->fetch();
-                $config = unserialize($getFetched['configuration']);
-                return $config;
-            } else {
-                throw new \Exception('Не удалось получить запись из очереди.');
-            }
+            $get = $this->conn->query($query);
+            $getFetched = $get->fetch();
+            $config = unserialize($getFetched['configuration']);
+            echo '<br>Запись получена из очереди. ';
+            return $config;
         } catch (\Exception $e) {
-            echo $e->getMessage();
+            echo '<br>Не удалось получить запись из очереди: ' . $e->getMessage();
             return null;
         }
     }
@@ -80,13 +75,10 @@ class PDODB extends DBBase
         $query = "DELETE from " . $this::QUERY_TABLE_NAME . " LIMIT 1;";
 
         try {
-            if ($this->conn->query($query)) {
-                echo "<br>Конфигурация удалена из очереди<br>";
-            } else {
-                throw new \Exception('Ошибка удаления конфигурации из очереди.');
-            }
+            $this->conn->query($query);
+            echo "<br>Конфигурация удалена из очереди<br>";
         } catch (\Exception $e) {
-            echo "<br>" . $e->getMessage() . "<br>";
+            echo "<br>Ошибка удаления конфигурации из очереди: " . $e->getMessage() . "<br>";
         }
     }
 
@@ -103,14 +95,10 @@ class PDODB extends DBBase
         $this->conn->quote($confHistory->getChangedLines()) . "," .
         $this->conn->quote($confHistory->getErrors()) . ");";
         try {
-            if ($this->conn->query($query)) {
-                echo "<br>" . "Конфигурация добавлена в историю" . "<br>";
-            } else {
-                throw new \Exception('Ошибка добавления конфигурации в историю.');
-            }
-
+            $this->conn->query($query);
+            echo "<br>" . "Конфигурация добавлена в историю";
         } catch (\Exception $e) {
-            echo "<br>" . $e->getMessage() . "<br>";
+            echo "<br>Ошибка добавления конфигурации в историю: " . $e->getMessage();
         }
     }
 
@@ -119,17 +107,15 @@ class PDODB extends DBBase
      *
      * @return int Количество записей
      */
-    public function getQueryCount(): int
+    public function getQueryCount(): ?int
     {
         try {
-            if ($count = $this->conn->query("SELECT COUNT(*) FROM query;")) {
-                $count = $count->fetch();
-                return $count[0];
-            } else {
-                throw new \Exception('Ошибка получения количества записей в очереди.');
-            }
+            $count = $this->conn->query("SELECT COUNT(*) FROM query;");
+            $count = $count->fetch();
+            return $count[0];
         } catch (\Exception $e) {
-            echo "<br>" . $e->getMessage() . "<br>";
+            echo "<br>Ошибка получения количества записей в очереди: " . $e->getMessage() . "<br>";
+            return null;
         }
     }
 
@@ -144,28 +130,20 @@ class PDODB extends DBBase
         $query = "SELECT * from " . $table . ";";
 
         try {
-            if ($output = $this->conn->query($query)) {
-                $returnArr = [];
-                while ($row = $output->fetch()) {
-                    array_push($returnArr, $row);
-                }
-                //print_r($returnArr);
-                return $returnArr;
-            } else {
-                throw new \Exception("Ошибка получения записей из таблицы " . $table);
+            $output = $this->conn->query($query);
+            $returnArr = [];
+            while ($row = $output->fetch()) {
+                array_push($returnArr, $row);
             }
+            //print_r($returnArr);
+            return $returnArr;
+        } catch (\PDOException $e) {
+            echo '<br>Ошибка получения записей из таблицы ' . $table . ": " . $e->getMessage();
+            return null;
         } catch (\Exception $e) {
-            echo 'asdasdasd';
-            print_r($output = $this->conn->query($query));
-            $e->getMessage();
+            echo '<br>Ошибка получения записей из таблицы ' . $table . ": " . $e->getMessage();
             return null;
         }
-
-        // $returnArr = [];
-        // while ($row = $query->fetch()) {
-        //     array_push($returnArr, $row);
-        // }
-        // return $returnArr;
     }
 
     /**

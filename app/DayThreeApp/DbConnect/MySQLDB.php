@@ -47,19 +47,15 @@ class MysQLDB extends DBBase
     public function getTableContentAsArrayAll(string $table): ?array
     {
         $query = "SELECT * from " . mysqli_real_escape_string($this->conn, $table) . ";";
-
         try {
-            if ($output = $this->conn->query($query)) {
-                $returnArr = [];
-                while ($row = $output->fetch_array()) {
-                    array_push($returnArr, $row);
-                }
-                return $returnArr;
-            } else {
-                throw new \Exception("Ошибка получения записей из табоицы " . $table);
+            $output = $this->conn->query($query);
+            $returnArr = [];
+            while ($row = $output->fetch_array()) {
+                array_push($returnArr, $row);
             }
+            return $returnArr;
         } catch (\Exception $e) {
-            $e->getMessage();
+            echo '<br>Ошибка получения записей из таблицы ' . $table . ": " . $e->getMessage();
             return null;
         }
     }
@@ -74,13 +70,10 @@ class MysQLDB extends DBBase
         $query = "INSERT INTO " . mysqli_real_escape_string($this->conn, $this::QUERY_TABLE_NAME) . " (configuration) VALUES ('" . mysqli_real_escape_string($this->conn, serialize($conf)) . "');";
 
         try {
-            if ($this->conn->query($query)) {
-                echo "Конфигурация добавлена в очередь" . "<br>";
-            } else {
-                throw new \Exception("Ошибка добавления конфигурации в очередь");
-            }
+            $this->conn->query($query);
+            echo "<br>Конфигурация добавлена в очередь";
         } catch (\Exception $e) {
-            $e->getMessage();
+            echo "<br>Ошибка добавления конфигурации в очередь" . $e->getMessage();
         }
     }
 
@@ -93,16 +86,13 @@ class MysQLDB extends DBBase
     {
         $query = "SELECT configuration from " . $this::QUERY_TABLE_NAME . " order by configuration asc limit 1;";
         try {
-            if ($get = $this->conn->query($query)) {
-                $getFetched = $get->fetch_array();
-                //print_r($getFetched['configuration']);
-                $config = unserialize($getFetched['configuration']);
-                return $config;
-            } else {
-                throw new \Exception('Не удалось получить запись из очереди.');
-            }
+            $get = $this->conn->query($query);
+            $getFetched = $get->fetch_array();
+            //print_r($getFetched['configuration']);
+            $config = unserialize($getFetched['configuration']);
+            return $config;
         } catch (\Exception $e) {
-            echo $e->getMessage();
+            echo '<br>Не удалось получить запись из очереди: ' . $e->getMessage();
             return null;
         }
     }
@@ -113,15 +103,11 @@ class MysQLDB extends DBBase
     public function deleteFirstQueryRecord()
     {
         $query = "DELETE from " . $this::QUERY_TABLE_NAME . " LIMIT 1;";
-
         try {
-            if ($this->conn->query($query)) {
-                echo "<br>Конфигурация удалена из очереди<br>";
-            } else {
-                throw new \Exception('Ошибка удаления конфигурации из очереди.');
-            }
+            $this->conn->query($query);
+            echo "<br>Конфигурация удалена из очереди<br>";
         } catch (\Exception $e) {
-            echo "<br>" . $e->getMessage() . "<br>";
+            echo "<br>Ошибка удаления конфигурации из очереди: " . $e->getMessage() . "<br>";
         }
     }
 
@@ -138,14 +124,10 @@ class MysQLDB extends DBBase
         mysqli_real_escape_string($this->conn, $confHistory->getChangedLines()) . "','" .
         mysqli_real_escape_string($this->conn, $confHistory->getErrors()) . "');";
         try {
-            if ($this->conn->query($query)) {
-                echo "<br>" . "Конфигурация добавлена в историю" . "<br>";
-            } else {
-                throw new \Exception('Ошибка добавления конфигурации в историю.');
-            }
-
+            $this->conn->query($query);
+            echo "<br>Конфигурация добавлена в историю";
         } catch (\Exception $e) {
-            echo "<br>" . $e->getMessage() . "<br>";
+            echo "<br>Ошибка добавления конфигурации в историю: " . $e->getMessage();
         }
     }
 
@@ -154,18 +136,15 @@ class MysQLDB extends DBBase
      *
      * @return int Количество записей
      */
-    public function getQueryCount(): int
+    public function getQueryCount(): ?int
     {
         try {
-            if ($count = $this->conn->query("SELECT COUNT(*) FROM query;")) {
-                $count = $count->fetch_array();
-                return $count[0];
-            } else {
-                throw new \Exception('Ошибка получения количества записей в очереди.');
-            }
-
+            $count = $this->conn->query("SELECT COUNT(*) FROM query;");
+            $count = $count->fetch_array();
+            return $count[0];
         } catch (\Exception $e) {
-            echo "<br>" . $e->getMessage() . "<br>";
+            echo "<br>Ошибка получения количества записей в очереди: " . $e->getMessage() . "<br>";
+            return null;
         }
     }
 
@@ -193,7 +172,7 @@ class MysQLDB extends DBBase
             echo "<br>" . $e->getMessage() . "<br>";
         }
     }
-    
+
     /**
      * Закрывает подключение к БД.
      */

@@ -13,6 +13,6 @@ abstract class DBBase implements DBInterface
     abstract public function saveConfigToQuery(Configuration $conf);
     abstract public function getFirstQueryRecordAsConfiguration(): ?Configuration;
     abstract public function deleteFirstQueryRecord();
-    abstract public function getQueryCount(): int;
+    abstract public function getQueryCount(): ?int;
     abstract public function addConfHistory(ConfigurationHistory $confHistory);
 }

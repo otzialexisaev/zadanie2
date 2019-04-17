@@ -55,7 +55,7 @@ class FtpLoader implements LoaderInterface
      */
     public function rewriteConfig(): ConfigurationHistory
     {
-        echo "FtpLoader \"переписывает\" конфиг";
+        echo "<br>FtpLoader \"переписывает\" конфиг";
         $confHistory = new ConfigurationHistory($this->data);
         $confHistory->setErrors(rand(0, 5));
         $confHistory->setChangedLines(rand(0, 1000));
