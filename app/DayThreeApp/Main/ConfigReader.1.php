@@ -129,41 +129,22 @@ class ConfigReader
         $this->connectToDB("MySQL");
         echo "История изменений:<br>";
         $historyArray = $this->conn->getTableContentAsArrayAll('history');
-        $arrObj = new \ArrayObject($historyArray);
+        $arrObj = new \ArrayObject();
         $it = $arrObj->getIterator();
-        echo "Iterating over: " . $arrObj->count() . " values\n";
-
         echo "<table style='width:600px;border:1px solid black'>";
         echo "<tr style='border:1px solid black'>
-            <th style='width:200px;border:1px solid black'>Название</th>
+            <th style='border:1px solid black'>Название</th>
             <th style='border:1px solid black'>Количество измененных строк</th>
             <th style='border:1px solid black'>Количество ошибок</th>
-            <th style='width:200px;border:1px solid black'>Время изменения</th>
         </tr>";
-        // while($it->valid()){
-        //     print_r($it->current()['configuration']);
-        //     echo "<br><br>";
-        //     $it->next();
-        // }
-        while($it->valid()){
-            //print_r($it->current()['configuration']);
-            $config = unserialize($it->current()['configuration']);
+        for ($i = 0; $i < sizeof($historyArray); $i++) {
+            $config = unserialize($historyArray[$i]['configuration']);
             echo "<tr style='border:1px solid black'>";
-            echo "<th style='width:200px;border:1px solid black'>" . $config->getData()['title'] . "</th>";
-            echo "<th style='border:1px solid black'>" . $it->current()['changed_lines'] . "</th>";
-            echo "<th style='border:1px solid black'>" . $it->current()['errors'] . "</th>";
-            echo "<th style='width:200px;border:1px solid black'>" . $it->current()['created_at'] . "</th>";
+            echo "<th style='border:1px solid black'>" . $config->getData()['title'] . "</th>";
+            echo "<th style='border:1px solid black'>" . $historyArray[$i]['changed_lines'] . "</th>";
+            echo "<th style='border:1px solid black'>" . $historyArray[$i]['errors'] . "</th>";
             echo "</tr>";
-            $it->next();
         }
-        // for ($i = 0; $i < sizeof($historyArray); $i++) {
-        //     $config = unserialize($historyArray[$i]['configuration']);
-        //     echo "<tr style='border:1px solid black'>";
-        //     echo "<th style='border:1px solid black'>" . $config->getData()['title'] . "</th>";
-        //     echo "<th style='border:1px solid black'>" . $historyArray[$i]['changed_lines'] . "</th>";
-        //     echo "<th style='border:1px solid black'>" . $historyArray[$i]['errors'] . "</th>";
-        //     echo "</tr>";
-        // }
         echo "</table>";
         $this->closeConnection();
     }

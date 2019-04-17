@@ -87,8 +87,11 @@ class MysQLDB extends DBBase
         $query = "SELECT configuration from " . $this::QUERY_TABLE_NAME . " order by configuration asc limit 1;";
         try {
             $get = $this->conn->query($query);
+            //print_r($get);
+            //echo "<hr>";
             $getFetched = $get->fetch_array();
-            //print_r($getFetched['configuration']);
+            //print_r($getFetched);
+            //echo "<hr>";
             $config = unserialize($getFetched['configuration']);
             return $config;
         } catch (\Exception $e) {
