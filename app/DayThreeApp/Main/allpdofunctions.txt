@@ -5,7 +5,7 @@ use DayThreeApp\BaseClasses\DBBase as DBBase;
 use DayThreeApp\Main\Configuration as Configuration;
 use DayThreeApp\Main\ConfigurationHistory as ConfigurationHistory;
 
-class PdoDb extends DBBase
+class PDODB extends DBBase
 {
     const QUERY_TABLE_NAME = "query";
     const HISTORY_TABLE_NAME = "history";

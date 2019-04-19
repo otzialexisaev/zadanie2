@@ -3,11 +3,12 @@ namespace DayThreeApp\Main;
 
 use DayThreeApp\Adapters\FtpAdapter as FtpAdapter;
 use DayThreeApp\Adapters\HttpAdapter as HttpAdapter;
-use DayThreeApp\Adapters\MysqlDbAdapter as MysqlDbAdapter;
 use DayThreeApp\BaseClasses\AdapterBase as AdapterBase;
 use DayThreeApp\DbConnect\MySQLDB as MySQLDB;
-use DayThreeApp\DbConnect\PdoDb as PdoDb;
+use DayThreeApp\DbConnect\PDODB as PDODB;
+use DayThreeApp\Adapters\MysqlDbAdapter as MysqlDbAdapter;
 use DayThreeApp\Interfaces\DbAdapterInterface as DbAdapterInterface;
+
 
 /**
  * Класс-обертка для работы с конфигами.
@@ -53,7 +54,7 @@ class ConfigReader
     public function setAdapter()
     {
         $config = include $this::DB_CONFIG_PATH;
-        if ($config['adapter'] == 'mysqli') {
+        if($config['adapter'] == 'mysqli'){
             return new MysqlDbAdapter($config);
         }
     }
@@ -72,11 +73,11 @@ class ConfigReader
     {
         switch ($db) {
             case 'PDO':
-                $this->conn = new PdoDb();
+                $this->conn = new PDODB();
                 $this->conn->connect("localhost", "root", "", "three");
                 break;
             case 'MySQL':
-                $this->conn = new MySqlDb();
+                $this->conn = new MySQLDB();
                 $this->conn->connect("localhost", "root", "", "three");
                 break;
 
@@ -116,35 +117,33 @@ class ConfigReader
         //$this->connectToDB("MySQL");
         //print_r($this->conn);
 
-        $db = new DbInteract($this->conn);
+        $dbUse = new Logic($this->conn);
+        $dbUse->getFirstQueryRecordAsConfiguration();
 
-        $configurations = AdapterBase::getConfig($path);
-        echo "<hr>Обновление конфигурационных файлов:<hr>";
-        $db->setConfigsQuery($configurations);
+
+        // $configurations = AdapterBase::getConfig($path);
+        // echo "<hr>Обновление конфигурационных файлов:<hr>";
         // $this->setConfigsQuery($configurations);
-        echo "<hr>";
-        $queryCount = $db->getQueryCount();
-        echo $queryCount;
-        for ($i = 0; $i < $queryCount; $i++) {
-            $configFromQuery = $db->getFirstQueryRecordAsConfiguration();
-            //print_r($configFromQuery);
-            //print_r($configFromQuery);
-            echo "<br>Название прайслиста: " . $configFromQuery->getData()['title'];
-            echo "<br>Источник прайслиста: " . $configFromQuery->getData()['source'];
-            $adapter = $this::initAdapter($configFromQuery);
-            $loader = $adapter->setLoader();
-            echo "<br>Перезапись конфигурации прайслиста...";
-            if ($confHistory = $loader->rewriteConfig()) {
-                $db->addConfHistory($confHistory);
-                $db->deleteFirstQueryRecord();
-                echo "<br>Ошибки: " . $confHistory->getErrors();
-                echo "<br>Количество измененных линий: " . $confHistory->getChangedLines();
-            } else {
-                echo "Конфигурация не была переписана.";
-            }
-            echo "<hr>";
-        }
-        $db->closeConnection();
+        // echo "<hr>";
+        // $queryCount = $this->conn->getQueryCount();
+        // for ($i = 0; $i < $queryCount; $i++) {
+        //     $configFromQuery = $this->conn->getFirstQueryRecordAsConfiguration();
+        //     echo "<br>Название прайслиста: " . $configFromQuery->getData()['title'];
+        //     echo "<br>Источник прайслиста: " . $configFromQuery->getData()['source'];
+        //     $adapter = $this::initAdapter($configFromQuery);
+        //     $loader = $adapter->setLoader();
+        //     echo "<br>Перезапись конфигурации прайслиста...";
+        //     if ($confHistory = $loader->rewriteConfig()) {
+        //         $this->conn->addConfHistory($confHistory);
+        //         $this->conn->deleteFirstQueryRecord();
+        //         echo "<br>Ошибки: " . $confHistory->getErrors();
+        //         echo "<br>Количество измененных линий: " . $confHistory->getChangedLines();
+        //     } else {
+        //         echo "Конфигурация не была переписана.";
+        //     }
+        //     echo "<hr>";
+        // }
+        // $this->closeConnection();
     }
     /*
      * Выводит каждую запись из таблицы history.
