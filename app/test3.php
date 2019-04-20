@@ -39,4 +39,4 @@ spl_autoload_register(function ($class) {
 
 $test = new ConfigReader();
 $test->updateConfigs("test.php");
-//$test->showHistory();
+$test->showHistory();

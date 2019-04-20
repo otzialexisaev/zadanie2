@@ -113,9 +113,6 @@ class ConfigReader
     {
         $adapter = $this->setAdapter();
         $this->setConnection($adapter);
-        //$this->connectToDB("MySQL");
-        //print_r($this->conn);
-
         $db = new DbInteract($this->conn);
 
         $configurations = AdapterBase::getConfig($path);
@@ -124,12 +121,12 @@ class ConfigReader
         // $this->setConfigsQuery($configurations);
         echo "<hr>";
         $queryCount = $db->getQueryCount();
-        echo $queryCount;
+        //echo $queryCount;
         for ($i = 0; $i < $queryCount; $i++) {
             $configFromQuery = $db->getFirstQueryRecordAsConfiguration();
             //print_r($configFromQuery);
             //print_r($configFromQuery);
-            echo "<br>Название прайслиста: " . $configFromQuery->getData()['title'];
+            echo "Название прайслиста: " . $configFromQuery->getData()['title'];
             echo "<br>Источник прайслиста: " . $configFromQuery->getData()['source'];
             $adapter = $this::initAdapter($configFromQuery);
             $loader = $adapter->setLoader();
@@ -151,12 +148,14 @@ class ConfigReader
      */
     public function showHistory()
     {
-        $this->connectToDB("MySQL");
+        $adapter = $this->setAdapter();
+        $this->setConnection($adapter);
+        $db = new DbInteract($this->conn);
         echo "История изменений:<br>";
-        $historyArray = $this->conn->getTableContentAsArrayAll('history');
+        $historyArray = $db->getHistoryAsArray();
         $arrObj = new \ArrayObject($historyArray);
         $it = $arrObj->getIterator();
-        echo "Iterating over: " . $arrObj->count() . " values\n";
+        //echo "Iterating over: " . $arrObj->count() . " values\n";
 
         echo "<table style='width:600px;border:1px solid black'>";
         echo "<tr style='border:1px solid black'>
@@ -165,13 +164,7 @@ class ConfigReader
             <th style='border:1px solid black'>Количество ошибок</th>
             <th style='width:200px;border:1px solid black'>Время изменения</th>
         </tr>";
-        // while($it->valid()){
-        //     print_r($it->current()['configuration']);
-        //     echo "<br><br>";
-        //     $it->next();
-        // }
         while ($it->valid()) {
-            //print_r($it->current()['configuration']);
             $config = unserialize($it->current()['configuration']);
             echo "<tr style='border:1px solid black'>";
             echo "<th style='width:200px;border:1px solid black'>" . $config->getData()['title'] . "</th>";
@@ -181,14 +174,6 @@ class ConfigReader
             echo "</tr>";
             $it->next();
         }
-        // for ($i = 0; $i < sizeof($historyArray); $i++) {
-        //     $config = unserialize($historyArray[$i]['configuration']);
-        //     echo "<tr style='border:1px solid black'>";
-        //     echo "<th style='border:1px solid black'>" . $config->getData()['title'] . "</th>";
-        //     echo "<th style='border:1px solid black'>" . $historyArray[$i]['changed_lines'] . "</th>";
-        //     echo "<th style='border:1px solid black'>" . $historyArray[$i]['errors'] . "</th>";
-        //     echo "</tr>";
-        // }
         echo "</table>";
         $this->closeConnection();
     }

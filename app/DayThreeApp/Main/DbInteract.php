@@ -85,9 +85,8 @@ class DbInteract
      */
     public function deleteFirstQueryRecord()
     {
-        //print_r($config);
         $this->conn->deleteFirstRecord($this::QUERY_TABLE_NAME);
-        echo "Конфигураця была удалена из очереди<br>";
+        echo "<br>Конфигурация была удалена из очереди";
     }
 
     /**
@@ -98,7 +97,7 @@ class DbInteract
         $config = $this->configToMysqlArray($config);
         //print_r($config);
         $this->conn->insert($this::QUERY_TABLE_NAME, $config);
-        echo "Конфигураця была добавлена в очередь<br>";
+        echo "<br>Конфигураця была добавлена в очередь";
     }
 
     /**
@@ -106,13 +105,17 @@ class DbInteract
      */
     public function getFirstQueryRecordAsConfiguration()
     {
-        $record = $this->conn->getFirstTableRecordAsArray($this::QUERY_TABLE_NAME);
+        $record = $this->conn->fetchFirst($this::QUERY_TABLE_NAME);
         echo "<hr>";
-        print_r($record['configuration']);
+        // print_r($record['configuration']);
         $config = unserialize($record['configuration']);
         return $config;
     }
 
+    public function getHistoryAsArray()
+    {
+        return $this->conn->fetchAll($this::HISTORY_TABLE_NAME);
+    }
     
     // /**
     //  * Закрывает подключение к БД.
@@ -121,20 +124,4 @@ class DbInteract
     {
         $this->conn->close();
     }
-
-    // public function getTableContentAsArrayAll(string $table): ?array
-    // {
-    //     $query = "SELECT * from " . mysqli_real_escape_string($this->conn, $table) . ";";
-    //     try {
-    //         $output = $this->conn->query($query);
-    //         $returnArr = [];
-    //         while ($row = $output->fetch_array()) {
-    //             array_push($returnArr, $row);
-    //         }
-    //         return $returnArr;
-    //     } catch (\Exception $e) {
-    //         echo '<br>Ошибка получения записей из таблицы ' . $table . ": " . $e->getMessage();
-    //         return null;
-    //     }
-    // }
 }

@@ -11,6 +11,9 @@ interface DbInterface
     // public function connect(string $host, string $user, string $password, string $dbname);
     
     public function insert(string $table, array $array);    
+    public function connect();
+    public function fetchAll(string $table): ?array;
+    public function fetchFirst(string $table): array;
     
     
     
