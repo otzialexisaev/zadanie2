@@ -43,14 +43,17 @@ class ConfigReader
      * @param MySQLDB $conn Объект MySQLDB.
      * @param array $configs Массив объектов Configuration.
      */
-    public function setConfigsQuery(array $configs)
+    private function setConfigsQuery(array $configs)
     {
         foreach ($configs as $configuration) {
             $this->conn->saveConfigToQuery($configuration);
         }
     }
 
-    public function setAdapter()
+    /**
+     * Выбор адаптера БД.
+     */
+    private function setAdapter()
     {
         $config = include $this::DB_CONFIG_PATH;
         if ($config['adapter'] == 'mysqli') {
@@ -58,37 +61,40 @@ class ConfigReader
         }
     }
 
-    public function setConnection(DbAdapterInterface $adapter)
-    {
-        $this->conn = $adapter->setConnection();
-    }
-
     /**
-     * Подключение к указанной БД (PDO или MySQL).
-     *
-     * @param string $db
+     * Установка связи с бд через адаптер.
      */
-    public function connectToDB(string $db)
+    private function setConnection(DbAdapterInterface $dbAdapter)
     {
-        switch ($db) {
-            case 'PDO':
-                $this->conn = new PdoDb();
-                $this->conn->connect("localhost", "root", "", "three");
-                break;
-            case 'MySQL':
-                $this->conn = new MySqlDb();
-                $this->conn->connect("localhost", "root", "", "three");
-                break;
-
-            default:
-                break;
-        }
+        $this->conn = $dbAdapter->setConnection();
     }
+
+    // /**
+    //  * Подключение к указанной БД (PDO или MySQL).
+    //  *
+    //  * @param string $db
+    //  */
+    // private function connectToDB(string $db)
+    // {
+    //     switch ($db) {
+    //         case 'PDO':
+    //             $this->conn = new PdoDb();
+    //             $this->conn->connect("localhost", "root", "", "three");
+    //             break;
+    //         case 'MySQL':
+    //             $this->conn = new MySqlDb();
+    //             $this->conn->connect("localhost", "root", "", "three");
+    //             break;
+
+    //         default:
+    //             break;
+    //     }
+    // }
 
     /**
      * Закрывает соединение с базой данных.
      */
-    public function closeConnection()
+    private function closeConnection()
     {
         $this->conn->close();
     }
@@ -111,10 +117,9 @@ class ConfigReader
      */
     public function updateConfigs(string $path)
     {
-        $adapter = $this->setAdapter();
-        $this->setConnection($adapter);
+        $dbAdapter = $this->setAdapter();
+        $this->setConnection($dbAdapter);
         $db = new DbInteract($this->conn);
-
         $configurations = AdapterBase::getConfig($path);
         echo "<hr>Обновление конфигурационных файлов:<hr>";
         $db->setConfigsQuery($configurations);
@@ -128,8 +133,8 @@ class ConfigReader
             //print_r($configFromQuery);
             echo "Название прайслиста: " . $configFromQuery->getData()['title'];
             echo "<br>Источник прайслиста: " . $configFromQuery->getData()['source'];
-            $adapter = $this::initAdapter($configFromQuery);
-            $loader = $adapter->setLoader();
+            $confLoaderAdapter = $this::initAdapter($configFromQuery);
+            $loader = $confLoaderAdapter->setLoader();
             echo "<br>Перезапись конфигурации прайслиста...";
             if ($confHistory = $loader->rewriteConfig()) {
                 $db->addConfHistory($confHistory);
@@ -148,8 +153,8 @@ class ConfigReader
      */
     public function showHistory()
     {
-        $adapter = $this->setAdapter();
-        $this->setConnection($adapter);
+        $dbAdapter = $this->setAdapter();
+        $this->setConnection($dbAdapter);
         $db = new DbInteract($this->conn);
         echo "История изменений:<br>";
         $historyArray = $db->getHistoryAsArray();
